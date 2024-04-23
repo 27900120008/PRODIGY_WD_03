@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    /* Your CSS styling here */
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 2px;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      cursor: pointer;
+    }
+    .cell:hover {
+      background-color: #ddd;
+    }
+    #status {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="board"></div>
+  <div id="status">Player X's turn</div>
+  <button onclick="restart()">Restart</button>
+
+  <script>
+    // JavaScript logic here
+    const board = document.getElementById('board');
+    const status = document.getElementById('status');
+    const cells = [];
+    let currentPlayer = 'X';
+    let gameActive = true;
+
+    // Initialize the board
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.row = i;
+        cell.dataset.col = j;
+        cell.addEventListener('click', handleClick);
+        cells.push(cell);
+        board.appendChild(cell);
+      }
+    }
+
+    function handleClick() {
+      if (!gameActive) return;
+      const row = this.dataset.row;
+      const col = this.dataset.col;
+      if (this.textContent !== '') return;
+      this.textContent = currentPlayer;
+      if (checkWin(row, col)) {
+        status.textContent = `Player ${currentPlayer} wins!`;
+        gameActive = false;
+      } else if (checkDraw()) {
+        status.textContent = "It's a draw!";
+        gameActive = false;
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        status.textContent = `Player ${currentPlayer}'s turn`;
+      }
+    }
+
+    function checkWin(row, col) {
+      const currentMarker = currentPlayer;
+      // Check row
+      if (cells[row * 3].textContent === currentMarker &&
+          cells[row * 3 + 1].textContent === currentMarker &&
+          cells[row * 3 + 2].textContent === currentMarker) {
+        return true;
+      }
+      // Check column
+      if (cells[col].textContent === currentMarker &&
+          cells[col + 3].textContent === currentMarker &&
+          cells[col + 6].textContent === currentMarker) {
+        return true;
+      }
+      // Check diagonals
+      if ((cells[0].textContent === currentMarker &&
+          cells[4].textContent === currentMarker &&
+          cells[8].textContent === currentMarker) ||
+          (cells[2].textContent === currentMarker &&
+          cells[4].textContent === currentMarker &&
+          cells[6].textContent === currentMarker)) {
+        return true;
+      }
+      return false;
+    }
+
+    function checkDraw() {
+      return cells.every(cell => cell.textContent !== '');
+    }
+
+    function restart() {
+      cells.forEach(cell => {
+        cell.textContent = '';
+      });
+      currentPlayer = 'X';
+      gameActive = true;
+      status.textContent = "Player X's turn";
+    }
+  </script>
+</body>
+</html>
